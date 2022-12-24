@@ -1,5 +1,6 @@
 export interface RuleAPI {
   readFile(filepath: string): string;
+  options: { [key: string]: any };
 }
 
 export type Rule = (

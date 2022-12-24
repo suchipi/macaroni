@@ -2,7 +2,7 @@
 import * as clefairy from "clefairy";
 import path from "path";
 import * as macaroni from "./index";
-import { makeIncludeRule } from "./rules/include";
+import { includeRule } from "./rules/include";
 
 const pkg = require("../" + "package.json");
 
@@ -30,6 +30,9 @@ export default function main(options: Options, ...files: Array<string>) {
     console.log(
       "  --max-iterations: Maximum number of times to process macros [default=10]"
     );
+    console.log(
+      "  --rules: Comma-separated list of macro rules to load (javascript files). By default, only the builtin #INCLUDE rule is used. Note that when specifying custom rules, the #INCLUDE rule will not be present. re-export `require('@suchipi/macaroni').includeRule` to use the #INCLUDE rule."
+    );
     return;
   }
 
@@ -55,11 +58,9 @@ export default function main(options: Options, ...files: Array<string>) {
           : path.resolve(process.cwd(), somePath)
       );
 
-  const includeRule = makeIncludeRule(
-    options.includePaths
-      ? parseCommaSepPaths(options.includePaths)
-      : [process.cwd()]
-  );
+  const includePaths = options.includePaths
+    ? parseCommaSepPaths(options.includePaths)
+    : [process.cwd()];
 
   const rules = options.rules
     ? parseCommaSepPaths(options.rules).map((file) =>
@@ -75,6 +76,7 @@ export default function main(options: Options, ...files: Array<string>) {
     const result = macaroni.process(absFile, {
       rules,
       maxIterations: options.maxIterations ?? 10,
+      includePaths,
     });
     out.push(result);
   }

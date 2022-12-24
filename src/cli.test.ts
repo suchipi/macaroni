@@ -5,6 +5,17 @@ import path from "path";
 
 const rootDir = pathMarker(path.join(__dirname, ".."));
 
+function cleanResult(result: { stdout: string; stderr: string }) {
+  result.stdout = result.stdout
+    .replace(new RegExp(rootDir(), "g"), "<root dir>")
+    .replace(/:\d+:\d+/g, ":line:col");
+  result.stderr = result.stderr
+    .replace(new RegExp(rootDir(), "g"), "<root dir>")
+    .replace(/:\d+:\d+/g, ":line:col");
+
+  return result;
+}
+
 test("basic test", async () => {
   const run = spawn(
     rootDir("dist/cli.js"),
@@ -12,7 +23,7 @@ test("basic test", async () => {
     { cwd: rootDir() }
   );
   await run.completion;
-  expect(run.result).toMatchInlineSnapshot(`
+  expect(cleanResult(run.result)).toMatchInlineSnapshot(`
     {
       "code": 0,
       "error": false,
@@ -31,14 +42,7 @@ test("include loop", async () => {
     cwd: rootDir("test_fixtures"),
   });
   await run.completion;
-  run.result.stdout = run.result.stdout
-    .replace(new RegExp(rootDir(), "g"), "<root dir>")
-    .replace(/:\d+:\d+/g, ":line:col");
-  run.result.stderr = run.result.stderr
-    .replace(new RegExp(rootDir(), "g"), "<root dir>")
-    .replace(/:\d+:\d+/g, ":line:col");
-
-  expect(run.result).toMatchInlineSnapshot(`
+  expect(cleanResult(run.result)).toMatchInlineSnapshot(`
     {
       "code": 1,
       "error": false,
@@ -55,7 +59,7 @@ test("include loop", async () => {
       at Object.readFile (<root dir>/dist/processor.js:line:col)
       at <root dir>/dist/rules/include.js:line:col
       at String.replace (<anonymous>)
-      at <root dir>/dist/rules/include.js:line:col
+      at includeRule (<root dir>/dist/rules/include.js:line:col)
       at <root dir>/dist/processor.js:line:col
       at Processor._withStack (<root dir>/dist/processor.js:line:col)
       at Processor.process (<root dir>/dist/processor.js:line:col)
@@ -72,6 +76,92 @@ test("include loop", async () => {
     }
     ",
       "stdout": "",
+    }
+  `);
+});
+
+test("custom rules - no include", async () => {
+  const run = spawn(
+    rootDir("dist/cli.js"),
+    [
+      "--include-paths",
+      "test_fixtures",
+      "--rules",
+      "test_fixtures/rules/version.js",
+      "test_fixtures/version 1.txt",
+    ],
+    { cwd: rootDir() }
+  );
+  await run.completion;
+  expect(cleanResult(run.result)).toMatchInlineSnapshot(`
+    {
+      "code": 0,
+      "error": false,
+      "stderr": "",
+      "stdout": "console.log(\\"v1.2.3\\");
+    #INCLUDE(\\"version 2.txt\\")
+    ",
+    }
+  `);
+});
+
+test("custom rules - with include", async () => {
+  const run = spawn(
+    rootDir("dist/cli.js"),
+    [
+      "--include-paths",
+      "test_fixtures",
+      "--rules",
+      "test_fixtures/rules/version.js,test_fixtures/rules/include.js",
+      "test_fixtures/version 1.txt",
+    ],
+    { cwd: rootDir() }
+  );
+  await run.completion;
+  expect(cleanResult(run.result)).toMatchInlineSnapshot(`
+    {
+      "code": 0,
+      "error": false,
+      "stderr": "",
+      "stdout": "console.log(\\"v1.2.3\\");
+    console.log(\\"v1.2.3\\", \\"again\\");
+    ",
+    }
+  `);
+});
+
+test("custom rules - args provided to rule", async () => {
+  const run = spawn(
+    rootDir("dist/cli.js"),
+    [
+      "--include-paths",
+      "test_fixtures",
+      "--rules",
+      "test_fixtures/rules/log-inputs.js",
+      "test_fixtures/something.txt",
+    ],
+    { cwd: rootDir() }
+  );
+  await run.completion;
+  expect(cleanResult(run.result)).toMatchInlineSnapshot(`
+    {
+      "code": 0,
+      "error": false,
+      "stderr": "rule inputs: [
+      {
+        path: '<root dir>/test_fixtures/something.txt',
+        content: 'hi\\\\n#INCLUDE(\\"something2.txt\\")\\\\nthere\\\\n'
+      },
+      {
+        readFile: [Function: readFile],
+        options: { includePaths: [ '<root dir>/test_fixtures' ] }
+      }
+    ]
+    ",
+      "stdout": "hi
+    #INCLUDE(\\"something2.txt\\")
+    there
+    ",
     }
   `);
 });

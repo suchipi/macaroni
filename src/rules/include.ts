@@ -18,13 +18,13 @@ function findFile(target: string, includePaths: Array<string>) {
   throw err;
 }
 
-export const makeIncludeRule =
-  (includePaths: Array<string>): Rule =>
-  (input, api) => {
-    return input.content.replace(/#INCLUDE\(([^)]+)\)/g, (match, target) => {
-      const parsedTarget = JSON.parse(target);
-      const file = findFile(parsedTarget, includePaths);
-      const content = api.readFile(file);
-      return content;
-    });
-  };
+export const includeRule: Rule = (input, api) => {
+  const includePaths = api.options.includePaths || [process.cwd()];
+
+  return input.content.replace(/#INCLUDE\(([^)]+)\)/g, (match, target) => {
+    const parsedTarget = JSON.parse(target);
+    const file = findFile(parsedTarget, includePaths);
+    const content = api.readFile(file);
+    return content;
+  });
+};

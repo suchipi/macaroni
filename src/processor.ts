@@ -7,7 +7,7 @@ export class Processor {
   private _api: RuleAPI;
   private _fileRequestStack: Array<string> = [];
 
-  constructor(rules: Array<Rule>) {
+  constructor(rules: Array<Rule>, options: { [key: string]: any } = {}) {
     this._rules = rules;
     this._api = {
       readFile: (filepath: string) => {
@@ -24,6 +24,7 @@ export class Processor {
 
         return this.process(filepath);
       },
+      options,
     };
   }
 

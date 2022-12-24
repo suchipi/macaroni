@@ -1,0 +1,2 @@
+console.log(#VERSION);
+#INCLUDE("version 2.txt")

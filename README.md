@@ -8,12 +8,13 @@ out of the box, it only has one macro: `#INCLUDE("some-file.txt")`, which puts t
 
 ## usage
 
+make sure you have node.js installed, and then:
+
 ```
-npm i -D @suchipi/macaroni
-npx macaroni [options] <files...>
+npx @suchipi/macaroni [options] <files...>
 ```
 
-run `npx macaroni --help` for more into
+run `npx @suchipi/macaroni --help` for more into
 
 ## custom rules
 
@@ -31,6 +32,8 @@ function versionRule(input, api) {
 
 module.exports = versionRule;
 ```
+
+if your rule reads other files, you _MUST_ use `api.readFile` to read them. This way, it will detect infinite loops when files request each other in a cycle. If you use `fs` directly, it won't be able to detect dependency cycles.
 
 see the file "src/rules/include.ts" in the git repo for a more complex rule
 
