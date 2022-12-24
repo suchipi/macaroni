@@ -28,5 +28,6 @@
     "processor",
     "preprocessor"
   ],
+  "repository": "suchipi/macaroni",
   "license": "MIT"
 }
