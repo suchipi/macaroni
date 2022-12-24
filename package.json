@@ -1,0 +1,32 @@
+{
+  "name": "@suchipi/macaroni",
+  "version": "0.1.0",
+  "description": "very barebones macro processor",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "macaroni": "dist/cli.js"
+  },
+  "dependencies": {
+    "clefairy": "^0.4.0",
+    "globby": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.17",
+    "first-base": "^0.2.0",
+    "path-less-traveled": "^2.0.0",
+    "typescript": "^4.9.4",
+    "vitest": "^0.26.2"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc && chmod +x dist/cli.js",
+    "test": "vitest"
+  },
+  "author": "Lily Skye <me@suchipi.com>",
+  "keywords": [
+    "macro",
+    "processor",
+    "preprocessor"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,3 @@
+hi
+#INCLUDE("something2.txt")
+there
