@@ -11,13 +11,14 @@ export class Processor {
     this._rules = rules;
     this._api = {
       readFile: (filepath: string) => {
-        if (this._fileRequestStack.includes(filepath)) {
+        const readFileStack = [...this._fileRequestStack];
+        if (readFileStack.includes(filepath)) {
           const err = new Error(
-            `Infinite loop detected; readFile stack: ${this._fileRequestStack
+            `Infinite loop detected; readFile stack: ${readFileStack
               .map((file) => path.relative(process.cwd(), file))
               .join(", ")}`
           );
-          Object.assign(err, { readFileStack: this._fileRequestStack });
+          Object.assign(err, { readFileStack });
           throw err;
         }
 

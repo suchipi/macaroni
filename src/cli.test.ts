@@ -45,12 +45,12 @@ test("include loop", async () => {
       "stderr": "Error: Infinite loop detected; readFile stack: loop 1.txt, loop 2.txt, loop 3.txt
 
     ./../dist/processor.js:line:col                                                   
-    14   |             readFile: (filepath) => {
-    15   |                 if (this._fileRequestStack.includes(filepath)) {
-    16 > |                     const err = new Error(\`Infinite loop detected; re...
-    17   |                         .map((file) => path_1.default.relative(proces...
-    18   |                         .join(\\", \\")}\`);
-    19   |                     Object.assign(err, { readFileStack: this._fileReq...
+    15   |                 const readFileStack = [...this._fileRequestStack];
+    16   |                 if (readFileStack.includes(filepath)) {
+    17 > |                     const err = new Error(\`Infinite loop detected; re...
+    18   |                         .map((file) => path_1.default.relative(proces...
+    19   |                         .join(\\", \\")}\`);
+    20   |                     Object.assign(err, { readFileStack });
 
       at Object.readFile (<root dir>/dist/processor.js:line:col)
       at <root dir>/dist/rules/include.js:line:col
@@ -63,7 +63,13 @@ test("include loop", async () => {
       at <root dir>/dist/rules/include.js:line:col
       at String.replace (<anonymous>)
     The above error also had these properties on it:
-    { readFileStack: [] }
+    {
+      readFileStack: [
+        [32m'<root dir>/test_fixtures/loop 1.txt'[39m,
+        [32m'<root dir>/test_fixtures/loop 2.txt'[39m,
+        [32m'<root dir>/test_fixtures/loop 3.txt'[39m
+      ]
+    }
     ",
       "stdout": "",
     }
