@@ -8,8 +8,7 @@
     "macaroni": "dist/cli.js"
   },
   "dependencies": {
-    "clefairy": "^0.4.0",
-    "globby": "^11.1.0"
+    "clefairy": "^0.4.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
