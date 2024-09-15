@@ -3,6 +3,7 @@ import * as clefairy from "clefairy";
 import path from "path";
 import * as macaroni from "./index";
 import { includeRule } from "./rules/include";
+import { helpText } from "./help";
 
 const pkg = require("../" + "package.json");
 
@@ -22,17 +23,7 @@ export type Options = clefairy.ArgsObjectToOptions<typeof argsObject>;
 
 export default function main(options: Options, ...files: Array<string>) {
   if (options.help || options.h) {
-    console.log("Usage: macaroni [options] <files...>");
-    console.log("Options:");
-    console.log(
-      "  --include-paths: Comma-separated list of search paths for the #INCLUDE rule"
-    );
-    console.log(
-      "  --max-iterations: Maximum number of times to process macros [default=10]"
-    );
-    console.log(
-      "  --rules: Comma-separated list of macro rules to load (JavaScript files). By default, only the builtin #INCLUDE rule is used. Note that when specifying custom rules, the #INCLUDE rule will not be present. re-export `require('@suchipi/macaroni').includeRule` to use the #INCLUDE rule."
-    );
+    console.log(helpText);
     return;
   }
 
