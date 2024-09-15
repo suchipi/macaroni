@@ -8,14 +8,14 @@
     "macaroni": "dist/cli.js"
   },
   "dependencies": {
-    "clefairy": "^0.4.0"
+    "clefairy": "^2.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.8.10",
-    "first-base": "^1.3.0",
-    "path-less-traveled": "^2.0.0",
-    "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "@types/node": "^22.5.5",
+    "first-base": "^1.5.0",
+    "path-less-traveled": "^2.1.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
   },
   "scripts": {
     "build": "rm -rf dist && tsc && chmod +x dist/cli.js",

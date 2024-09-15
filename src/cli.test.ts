@@ -53,7 +53,7 @@ test("include loop", async () => {
     16   |                 if (readFileStack.includes(filepath)) {
     17 > |                     const err = new Error(\`Infinite loop detected; re...
     18   |                         .map((file) => path_1.default.relative(proces...
-    19   |                         .join(\\", \\")}\`);
+    19   |                         .join(", ")}\`);
     20   |                     Object.assign(err, { readFileStack });
 
       at Object.readFile (<root dir>/dist/processor.js:line:col)
@@ -98,8 +98,8 @@ test("custom rules - no include", async () => {
       "code": 0,
       "error": false,
       "stderr": "",
-      "stdout": "console.log(\\"v1.2.3\\");
-    #INCLUDE(\\"version 2.txt\\")
+      "stdout": "console.log("v1.2.3");
+    #INCLUDE("version 2.txt")
     ",
     }
   `);
@@ -123,8 +123,8 @@ test("custom rules - with include", async () => {
       "code": 0,
       "error": false,
       "stderr": "",
-      "stdout": "console.log(\\"v1.2.3\\");
-    console.log(\\"v1.2.3\\", \\"again\\");
+      "stdout": "console.log("v1.2.3");
+    console.log("v1.2.3", "again");
     ",
     }
   `);
@@ -150,7 +150,7 @@ test("custom rules - args provided to rule", async () => {
       "stderr": "rule inputs: [
       {
         path: '<root dir>/test_fixtures/something.txt',
-        content: 'hi\\\\n#INCLUDE(\\"something2.txt\\")\\\\nthere\\\\n'
+        content: 'hi\\n#INCLUDE("something2.txt")\\nthere\\n'
       },
       {
         readFile: [Function: readFile],
@@ -159,7 +159,7 @@ test("custom rules - args provided to rule", async () => {
     ]
     ",
       "stdout": "hi
-    #INCLUDE(\\"something2.txt\\")
+    #INCLUDE("something2.txt")
     there
     ",
     }
