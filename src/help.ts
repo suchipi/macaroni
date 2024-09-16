@@ -14,6 +14,6 @@ Options:
     Comma-separated list of macro rules to load (JavaScript files which export
     functions). By default, only the builtin #INCLUDE rule is used.
     Note that when specifying custom rules, the #INCLUDE rule will not be
-    present. Re-export \`require('@suchipi/macaroni').includeRule\` to use the
-    #INCLUDE rule.
+    present. Put '@suchipi/macaroni/include-rule' in your comma-separated list
+    in order to use the #INCLUDE rule.
 `;

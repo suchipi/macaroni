@@ -4,6 +4,7 @@ import path from "path";
 import * as macaroni from "./index";
 import { includeRule } from "./rules/include";
 import { helpText } from "./help";
+import { loadFile, resolvePath } from "./load-file";
 
 const pkg = require("../" + "package.json");
 
@@ -21,7 +22,7 @@ const argsObject = {
 
 export type Options = clefairy.ArgsObjectToOptions<typeof argsObject>;
 
-export default function main(options: Options, ...files: Array<string>) {
+export default async function main(options: Options, ...files: Array<string>) {
   if (options.help || options.h) {
     console.log(helpText);
     return;
@@ -53,11 +54,32 @@ export default function main(options: Options, ...files: Array<string>) {
     ? parseCommaSepPaths(options.includePaths)
     : [process.cwd()];
 
-  const rules = options.rules
-    ? parseCommaSepPaths(options.rules).map((file) =>
-        require(file.startsWith(".") ? path.resolve(process.cwd(), file) : file)
-      )
-    : [includeRule];
+  const rulePaths = options.rules ? parseCommaSepPaths(options.rules) : [];
+
+  const rules: Array<macaroni.Rule> = [];
+  for (const rulePath of rulePaths) {
+    const resolvedRulePath = resolvePath(rulePath);
+    const ns = await loadFile(resolvedRulePath);
+
+    let target = ns.default;
+    if (ns.__esModule && "default" in ns.default) {
+      target = ns.default.default;
+    }
+
+    if (typeof target === "function") {
+      rules.push(target);
+    } else {
+      throw new Error(
+        `Expected ${JSON.stringify(
+          rulePath
+        )} to have a default export (the rule function), but its default export was: ${typeof target}`
+      );
+    }
+  }
+
+  if (rules.length === 0) {
+    rules.push(includeRule);
+  }
 
   for (const file of files) {
     const absFile = path.isAbsolute(file)

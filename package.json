@@ -8,10 +8,12 @@
     "macaroni": "dist/cli.js"
   },
   "dependencies": {
-    "clefairy": "^2.0.0"
+    "clefairy": "^2.0.0",
+    "resolve": "^1.22.8"
   },
   "devDependencies": {
     "@types/node": "^22.5.5",
+    "@types/resolve": "^1.20.6",
     "first-base": "^1.5.0",
     "path-less-traveled": "^2.1.0",
     "typescript": "^5.6.2",
