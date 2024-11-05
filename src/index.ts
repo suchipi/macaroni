@@ -1,4 +1,4 @@
-import { Rule, RuleAPI } from "./rule";
+import type { Rule, RuleAPI } from "./rule";
 import { Processor } from "./processor";
 import { includeRule } from "./rules/include";
 
