@@ -165,3 +165,28 @@ test("custom rules - args provided to rule", async () => {
     }
   `);
 });
+
+test("custom rules - mjs rule", async () => {
+  const run = spawn(
+    rootDir("dist/cli.js"),
+    [
+      "--include-paths",
+      "test_fixtures",
+      "--rules",
+      "test_fixtures/rules/version.mjs",
+      "test_fixtures/version 1.txt",
+    ],
+    { cwd: rootDir() }
+  );
+  await run.completion;
+  expect(cleanResult(run.result)).toMatchInlineSnapshot(`
+    {
+      "code": 0,
+      "error": false,
+      "stderr": "",
+      "stdout": "console.log("v1.2.3");
+    #INCLUDE("version 2.txt")
+    ",
+    }
+  `);
+});
